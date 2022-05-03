@@ -176,9 +176,10 @@ void AboutDialog::CreateInformationTab(ShuttleGui& AboutDialogGUI) {
         << XO("The Build")
         << wxT("</h3>\n<table>"); // start build info table
 
-    AddBuildInfoRow(&informationStr, XO("Commit Id:"), BuildInfo::getRevisionIdentifier());
+    AddBuildInfoRow(&informationStr, XO("Version:"), BuildInfo::getRevisionIdentifier());
     AddBuildInfoRow(&informationStr, XO("Build type:"), BuildInfo::getBuildType());
     AddBuildInfoRow(&informationStr, XO("Compiler:"), BuildInfo::getCompilerVersionString());
+    AddBuildInfoRow(&informationStr, XO("wxWidgets:"), BuildInfo::getWxWidgetsVersion());
 
     // Install prefix
 #ifdef __WXGTK__
@@ -201,7 +202,6 @@ void AboutDialog::CreateInformationTab(ShuttleGui& AboutDialogGUI) {
     informationStr
         << wxT("<table>");   // start table of file formats supported
 
-    AddBuildInfoRow(&informationStr, wxT("wxWidgets"), XO("Cross-platform GUI library"), Verbatim(wxVERSION_NUM_DOT_STRING_T));
     AddBuildInfoRow(&informationStr, wxT("PortAudio"), XO("Audio playback and recording"), Verbatim(wxT("v19")));
     AddBuildInfoRow(&informationStr, wxT("libsoxr"), XO("Sample rate conversion"), enabled);
 
@@ -228,9 +228,6 @@ void AboutDialog::CreateInformationTab(ShuttleGui& AboutDialogGUI) {
     #ifndef USE_FFMPEG
     #define USE_FFMPEG 0
     #endif
-    #ifndef USE_GSTREAMER
-    #define USE_GSTREAMER 0
-    #endif
     #ifndef USE_NYQUIST
     #define USE_NYQUIST 0
     #endif
@@ -249,9 +246,6 @@ void AboutDialog::CreateInformationTab(ShuttleGui& AboutDialogGUI) {
     #ifndef USE_LV2
     #define USE_LV2 0
     #endif
-    #ifndef USE_PORTMIXER
-    #define USE_PORTMIXER 0
-    #endif
     #ifndef USE_SOUNDTOUCH
     #define USE_SOUNDTOUCH 0
     #endif
@@ -266,7 +260,6 @@ void AboutDialog::CreateInformationTab(ShuttleGui& AboutDialogGUI) {
     const auto buildInfo_libtwolame = XO("MP2 export");
     const auto buildInfo_libquicktime = XO("Import via QuickTime");
     const auto buildInfo_libffmpeg = XO("FFmpeg Import/Export");
-    const auto buildInfo_libgstreamer = XO("Import via GStreamer");
     const auto buildInfo_pluginSupport = XO("Plug-in support");
     const auto buildInfo_soundCardMixerSupport = XO("Sound card mixer support");
     const auto buildInfo_pitchTempoSupport = XO("Pitch and Tempo Change support");
@@ -295,9 +288,6 @@ void AboutDialog::CreateInformationTab(ShuttleGui& AboutDialogGUI) {
     #ifdef USE_FFMPEG
         AddBuildInfoRow(&informationStr, wxT("ffmpeg"), buildInfo_libffmpeg, USE_FFMPEG ? enabled : disabled);
     #endif
-    #ifdef USE_GSTREAMER
-        AddBuildInfoRow(&informationStr, wxT("gstreamer"), buildInfo_libgstreamer, USE_GSTREAMER ? enabled : disabled);
-    #endif
     informationStr << wxT("</table>\n");  //end table of file formats supported
 
     informationStr
@@ -324,9 +314,6 @@ void AboutDialog::CreateInformationTab(ShuttleGui& AboutDialogGUI) {
     #endif
     #ifdef USE_LV2
         AddBuildInfoRow(&informationStr, wxT("LV2"), buildInfo_pluginSupport, USE_LV2 ? enabled : disabled);
-    #endif
-    #ifdef USE_PORTMIXER
-        AddBuildInfoRow(&informationStr, wxT("PortMixer"), buildInfo_soundCardMixerSupport, USE_PORTMIXER ? enabled : disabled);
     #endif
     #ifdef USE_SOUNDTOUCH
         AddBuildInfoRow(&informationStr, wxT("SoundTouch"), buildInfo_pitchTempoSupport, USE_SOUNDTOUCH ? enabled : disabled);
@@ -862,15 +849,15 @@ void AboutDialog::GenerateTenacityPageDescription(wxTextOutputStream& tos) {
     #undef _
     #define _(s) wxGetTranslation((s))
         << wxT("<h3>DarkTenacity ")
-        << wxString(AUDACITY_VERSION_STRING)
+        << wxString(GIT_DESCRIBE)
         << wxT("</h3>")
         << wxT("Customised version of the free, open source, cross-platform audio recorder and editor Tenacity.")
 
     #else
         << XO("<h3>")
         << ProgramName
-        // << wxT(" ")
-        // << wxString(AUDACITY_VERSION_STRING)
+        << wxT(" ")
+        << wxString(GIT_DESCRIBE)
         << wxT("</h3>")
         /* i18n-hint: The program's name substitutes for %s */
         << XO("Free, open source, cross-platform audio recorder and editor.")
@@ -1022,7 +1009,7 @@ void AboutDialog::GeneratePreforkWebsiteInfo(wxTextOutputStream& tos) {
         .Format(
             Verbatim("<b>%s</b>").Format(ProgramName),
             wxT("&copy;"),
-            wxT("2021"),
+            wxT("2022"),
             ProgramName)
         << wxT("<br>");
 #endif
